@@ -42,6 +42,16 @@
 
   function publish(id) {
     const state = stateFor(id);
+    return publishLive(state);
+  }
+
+  function publishLive(input) {
+    const state = {
+      ...scenarios.normal,
+      ...input,
+      eventId: input.eventId || `${Date.now()}-${Math.random()}`,
+      updatedAt: new Date().toISOString()
+    };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     if (channel) channel.postMessage(state);
     window.dispatchEvent(new CustomEvent('aquaguard-state', { detail: state }));
@@ -72,5 +82,5 @@
     return true;
   }
 
-  window.AquaGuardDemo = { scenarios, read, publish, subscribe, requestNotifications, notifyDanger };
+  window.AquaGuardDemo = { scenarios, read, publish, publishLive, subscribe, requestNotifications, notifyDanger };
 })();

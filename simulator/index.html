@@ -20,10 +20,14 @@
         <h2 class="text-2xl font-bold">시나리오 선택</h2>
         <p class="mt-2 text-slate-400">버튼을 누르면 오른쪽 기존 AquaGuard 화면이 즉시 변경됩니다.</p>
         <div class="mt-6 grid grid-cols-2 gap-5">
-          <button data-scenario="normal" class="scenario rounded-3xl border-2 border-emerald-500 bg-emerald-500/10 p-7 text-left transition hover:-translate-y-1 hover:bg-emerald-500/20"><span class="text-4xl">✓</span><strong class="mt-5 block text-2xl text-emerald-400">정상 가동</strong><span class="mt-2 block text-slate-300">5.2 bar · 진동 18점</span></button>
-          <button data-scenario="warning" class="scenario rounded-3xl border-2 border-amber-500 bg-amber-500/10 p-7 text-left transition hover:-translate-y-1 hover:bg-amber-500/20"><span class="text-4xl">!</span><strong class="mt-5 block text-2xl text-amber-400">주의 단계</strong><span class="mt-2 block text-slate-300">7.4 bar · 진동 55점</span></button>
-          <button data-scenario="danger" class="scenario rounded-3xl border-2 border-red-500 bg-red-500/10 p-7 text-left transition hover:-translate-y-1 hover:bg-red-500/20"><span class="text-4xl">⚠</span><strong class="mt-5 block text-2xl text-red-400">긴급 위험</strong><span class="mt-2 block text-slate-300">8.5 bar · 진동 82점</span></button>
-          <button data-scenario="recovery" class="scenario rounded-3xl border-2 border-sky-500 bg-sky-500/10 p-7 text-left transition hover:-translate-y-1 hover:bg-sky-500/20"><span class="text-4xl">↘</span><strong class="mt-5 block text-2xl text-sky-400">복구 시나리오</strong><span class="mt-2 block text-slate-300">6.3 bar · 진동 32점</span></button>
+          <button data-scenario="normal" class="scenario rounded-3xl border-2 border-emerald-500 bg-emerald-500/10 p-7 text-left transition hover:-translate-y-1 hover:bg-emerald-500/20"><span class="text-4xl">✓</span><strong class="mt-5 block text-2xl text-emerald-400">정상 상태로</strong><span class="mt-2 block text-slate-300">5.2 bar · 진동 18점</span></button>
+          <button data-scenario="warning" class="scenario rounded-3xl border-2 border-amber-500 bg-amber-500/10 p-7 text-left transition hover:-translate-y-1 hover:bg-amber-500/20"><span class="text-4xl">!</span><strong class="mt-5 block text-2xl text-amber-400">펌프 부하 증가</strong><span class="mt-2 block text-slate-300">7.4 bar · 진동 55점</span></button>
+          <button data-scenario="danger" class="scenario rounded-3xl border-2 border-red-500 bg-red-500/10 p-7 text-left transition hover:-translate-y-1 hover:bg-red-500/20"><span class="text-4xl">⚠</span><strong class="mt-5 block text-2xl text-red-400">베어링 마모 발생</strong><span class="mt-2 block text-slate-300">8.5 bar · 진동 82점</span></button>
+          <button data-scenario="recovery" class="scenario rounded-3xl border-2 border-sky-500 bg-sky-500/10 p-7 text-left transition hover:-translate-y-1 hover:bg-sky-500/20"><span class="text-4xl">↘</span><strong class="mt-5 block text-2xl text-sky-400">복구 시작</strong><span class="mt-2 block text-slate-300">6.3 bar · 진동 32점</span></button>
+        </div>
+        <div class="mt-6 rounded-2xl border border-slate-700 bg-slate-900 p-5">
+          <div class="flex items-center justify-between"><span id="animation-status" class="font-bold text-slate-300">시나리오 대기 중</span><span id="animation-percent" class="font-bold text-sky-400">0%</span></div>
+          <div class="mt-3 h-3 overflow-hidden rounded-full bg-slate-700"><div id="animation-progress" class="h-full w-0 rounded-full bg-sky-400 transition-[width] duration-200"></div></div>
         </div>
         <button id="notification-permission" class="mt-6 w-full rounded-2xl border border-slate-600 bg-slate-800 px-6 py-4 text-lg font-bold hover:bg-slate-700">브라우저 알림 허용</button>
       </div>
@@ -48,13 +52,34 @@
     }
     const pressure=document.getElementById('pressure'), vibration=document.getElementById('vibration'), statusBadge=document.getElementById('status-badge'), log=document.getElementById('event-log');
     AquaGuardDemo.subscribe(render);
-    document.querySelectorAll('[data-scenario]').forEach((button)=>button.addEventListener('click', async()=>{
-      const state=AquaGuardDemo.publish(button.dataset.scenario); render(state);
-      const item=document.createElement('li'); item.className='rounded-xl bg-slate-800 p-3'; item.textContent=`${new Date().toLocaleTimeString()} · ${state.label} 시나리오 전송`; log.prepend(item);
-      if(state.tone==='danger'){
-        if(Notification.permission==='default') await AquaGuardDemo.requestNotifications();
-        AquaGuardDemo.notifyDanger(state);
+    let animationToken=0;
+    function addLog(text){const item=document.createElement('li');item.className='rounded-xl bg-slate-800 p-3';item.textContent=`${new Date().toLocaleTimeString()} · ${text}`;log.prepend(item)}
+    function toneFor(pressureValue,vibrationValue){if(pressureValue>=8||vibrationValue>=75)return 'danger';if(pressureValue>=7||vibrationValue>=50)return 'warning';return 'normal'}
+    function wait(ms){return new Promise((resolve)=>setTimeout(resolve,ms))}
+    async function animateScenario(targetId){
+      const durations={normal:12000,warning:7400,danger:15000,recovery:12000},duration=durations[targetId],interval=targetId==='warning'?200:300,steps=Math.ceil(duration/interval);
+      const token=++animationToken,start=AquaGuardDemo.read(),target=AquaGuardDemo.scenarios[targetId],eventId=`sequence-${Date.now()}-${Math.random()}`;
+      let history=(start.history||AquaGuardDemo.scenarios.normal.history).slice(-11),lastTone=start.tone,notified=false;
+      document.getElementById('animation-status').textContent=`${target.label} 시나리오 진행 중`;
+      addLog(`${target.label} 시나리오 시작`);
+      for(let step=1;step<=steps;step++){
+        if(token!==animationToken)return;
+        const linear=step/steps,eased=linear<.5?2*linear*linear:1-Math.pow(-2*linear+2,2)/2;
+        const pressureValue=start.pressure+(target.pressure-start.pressure)*eased,vibrationValue=Math.round(start.vibration+(target.vibration-start.vibration)*eased);
+        const tone=targetId==='recovery'?'recovery':toneFor(pressureValue,vibrationValue),toneData=AquaGuardDemo.scenarios[tone];
+        history=[...history.slice(-11),Number(pressureValue.toFixed(2))];
+        const state=AquaGuardDemo.publishLive({...toneData,id:targetId,tone,label:toneData.label,pressure:Number(pressureValue.toFixed(2)),vibration:vibrationValue,history:[...history],eventId});
+        if(tone!==lastTone){addLog(`${toneData.label} 기준 진입`);lastTone=tone}
+        if(tone==='danger'&&!notified){AquaGuardDemo.notifyDanger(state);notified=true}
+        const percent=Math.round(linear*100),remaining=Math.max(0,Math.ceil((duration-step*interval)/1000));document.getElementById('animation-percent').textContent=`${percent}% · ${remaining}초`;document.getElementById('animation-progress').style.width=`${percent}%`;
+        await wait(interval);
       }
+      if(token!==animationToken)return;
+      document.getElementById('animation-status').textContent=`${target.label} 시나리오 완료`;addLog(`${target.label} 목표값 도달`);
+    }
+    document.querySelectorAll('[data-scenario]').forEach((button)=>button.addEventListener('click',async()=>{
+      if(button.dataset.scenario==='danger'&&'Notification' in window&&Notification.permission==='default')await AquaGuardDemo.requestNotifications();
+      animateScenario(button.dataset.scenario);
     }));
     document.getElementById('notification-permission').addEventListener('click',async(event)=>{
       const result=await AquaGuardDemo.requestNotifications(); event.currentTarget.textContent=result==='granted'?'브라우저 알림 사용 중':'브라우저 알림이 차단됨';
