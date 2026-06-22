@@ -64,7 +64,7 @@
     }
     AquaGuardDemo.subscribe(render);
     function startScenario(targetId){
-      const baseDurations={normal:12000,warning:7400,danger:15000,recovery:12000},minimumDurations={normal:3500,warning:2500,danger:4500,recovery:3500};
+      const baseDurations={normal:8000,warning:7400,danger:8000,recovery:10000},minimumDurations={normal:3000,warning:2500,danger:3000,recovery:3000};
       const referenceDistance={normal:{pressure:3.3,vibration:64},warning:{pressure:2.2,vibration:37},danger:{pressure:3.3,vibration:64},recovery:{pressure:2.2,vibration:50}};
       const start=AquaGuardDemo.materialize(AquaGuardDemo.read()),target=AquaGuardDemo.scenarios[targetId];
       const reference=referenceDistance[targetId],distanceRatio=Math.min(1,Math.max(Math.abs(target.pressure-start.pressure)/reference.pressure,Math.abs(target.vibration-start.vibration)/reference.vibration));
