@@ -1,5 +1,5 @@
 (function () {
-  const STORAGE_KEY = 'aquaguard-demo-state-v1';
+  const STORAGE_KEY = 'aquaguard-demo-state-v2';
   const CHANNEL_NAME = 'aquaguard-demo-channel';
 
   const scenarios = {
