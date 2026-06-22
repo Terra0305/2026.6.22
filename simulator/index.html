@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AquaGuard AI 센서 시뮬레이터</title>
+  <link rel="icon" href="/assets/logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;word-break:keep-all}.scenario:focus-visible{outline:4px solid #38bdf8;outline-offset:4px}</style>
+</head>
+<body class="min-h-screen bg-slate-950 text-white">
+  <main class="mx-auto max-w-6xl px-8 py-10">
+    <header class="flex items-center justify-between gap-8 border-b border-slate-700 pb-8">
+      <div class="flex items-center gap-5"><img src="/assets/logo.png" alt="AquaGuard AI" class="h-20 w-20 rounded-2xl bg-white object-contain"/><div><p class="font-bold text-sky-400">HACKATHON CONTROL DESK</p><h1 class="mt-1 text-4xl font-black">센서 시나리오 시뮬레이터</h1></div></div>
+      <div class="text-right"><p class="text-sm text-slate-400">연결 상태</p><p class="mt-1 flex items-center gap-2 font-bold text-emerald-400"><span class="h-3 w-3 animate-pulse rounded-full bg-emerald-400"></span>기존 화면 실시간 연결</p></div>
+    </header>
+
+    <section class="mt-10 grid gap-8 lg:grid-cols-[1.5fr_1fr]">
+      <div>
+        <h2 class="text-2xl font-bold">시나리오 선택</h2>
+        <p class="mt-2 text-slate-400">버튼을 누르면 오른쪽 기존 AquaGuard 화면이 즉시 변경됩니다.</p>
+        <div class="mt-6 grid grid-cols-2 gap-5">
+          <button data-scenario="normal" class="scenario rounded-3xl border-2 border-emerald-500 bg-emerald-500/10 p-7 text-left transition hover:-translate-y-1 hover:bg-emerald-500/20"><span class="text-4xl">✓</span><strong class="mt-5 block text-2xl text-emerald-400">정상 가동</strong><span class="mt-2 block text-slate-300">5.2 bar · 진동 18점</span></button>
+          <button data-scenario="warning" class="scenario rounded-3xl border-2 border-amber-500 bg-amber-500/10 p-7 text-left transition hover:-translate-y-1 hover:bg-amber-500/20"><span class="text-4xl">!</span><strong class="mt-5 block text-2xl text-amber-400">주의 단계</strong><span class="mt-2 block text-slate-300">7.4 bar · 진동 55점</span></button>
+          <button data-scenario="danger" class="scenario rounded-3xl border-2 border-red-500 bg-red-500/10 p-7 text-left transition hover:-translate-y-1 hover:bg-red-500/20"><span class="text-4xl">⚠</span><strong class="mt-5 block text-2xl text-red-400">긴급 위험</strong><span class="mt-2 block text-slate-300">8.5 bar · 진동 82점</span></button>
+          <button data-scenario="recovery" class="scenario rounded-3xl border-2 border-sky-500 bg-sky-500/10 p-7 text-left transition hover:-translate-y-1 hover:bg-sky-500/20"><span class="text-4xl">↘</span><strong class="mt-5 block text-2xl text-sky-400">복구 시나리오</strong><span class="mt-2 block text-slate-300">6.3 bar · 진동 32점</span></button>
+        </div>
+        <button id="notification-permission" class="mt-6 w-full rounded-2xl border border-slate-600 bg-slate-800 px-6 py-4 text-lg font-bold hover:bg-slate-700">브라우저 알림 허용</button>
+      </div>
+
+      <aside class="rounded-3xl border border-slate-700 bg-slate-900 p-7">
+        <div class="flex items-center justify-between"><h2 class="text-2xl font-bold">현재 전송값</h2><span id="status-badge" class="rounded-full bg-emerald-500 px-4 py-2 font-bold text-slate-950">정상</span></div>
+        <dl class="mt-8 space-y-5">
+          <div class="rounded-2xl bg-slate-800 p-5"><dt class="text-slate-400">현재 수압</dt><dd class="mt-1 text-4xl font-black"><span id="pressure">5.2</span> <small class="text-lg text-slate-400">bar</small></dd></div>
+          <div class="rounded-2xl bg-slate-800 p-5"><dt class="text-slate-400">진동 이상 점수</dt><dd class="mt-1 text-4xl font-black"><span id="vibration">18</span> <small class="text-lg text-slate-400">점</small></dd></div>
+        </dl>
+        <h3 class="mt-8 font-bold">이벤트 로그</h3>
+        <ol id="event-log" class="mt-3 max-h-48 space-y-2 overflow-y-auto text-sm text-slate-300"><li class="rounded-xl bg-slate-800 p-3">시뮬레이터 준비 완료</li></ol>
+      </aside>
+    </section>
+  </main>
+  <script src="/demo-state.js"></script>
+  <script>
+    const badgeColors={normal:'bg-emerald-500',warning:'bg-amber-400',danger:'bg-red-500 text-white',recovery:'bg-sky-400'};
+    function render(state){
+      pressure.textContent=state.pressure.toFixed(1); vibration.textContent=state.vibration; statusBadge.textContent=state.label;
+      statusBadge.className=`rounded-full px-4 py-2 font-bold text-slate-950 ${badgeColors[state.tone]}`;
+    }
+    const pressure=document.getElementById('pressure'), vibration=document.getElementById('vibration'), statusBadge=document.getElementById('status-badge'), log=document.getElementById('event-log');
+    AquaGuardDemo.subscribe(render);
+    document.querySelectorAll('[data-scenario]').forEach((button)=>button.addEventListener('click', async()=>{
+      const state=AquaGuardDemo.publish(button.dataset.scenario); render(state);
+      const item=document.createElement('li'); item.className='rounded-xl bg-slate-800 p-3'; item.textContent=`${new Date().toLocaleTimeString()} · ${state.label} 시나리오 전송`; log.prepend(item);
+      if(state.tone==='danger'){
+        if(Notification.permission==='default') await AquaGuardDemo.requestNotifications();
+        AquaGuardDemo.notifyDanger(state);
+      }
+    }));
+    document.getElementById('notification-permission').addEventListener('click',async(event)=>{
+      const result=await AquaGuardDemo.requestNotifications(); event.currentTarget.textContent=result==='granted'?'브라우저 알림 사용 중':'브라우저 알림이 차단됨';
+    });
+  </script>
+</body>
+</html>

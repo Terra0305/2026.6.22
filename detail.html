@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>장비 상세 - AquaGuard AI</title>
+  <link rel="icon" type="image/png" href="assets/logo.png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
   <script>
@@ -61,7 +62,7 @@
       <main class="px-5 py-6 space-y-5">
         <section>
           <h2 class="text-[32px] font-bold text-primary">메인 펌프 A동</h2>
-          <div class="mt-3 inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-error-container px-3 py-2 text-[16px] font-semibold text-error">
+          <div id="detail-status" class="mt-3 inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-error-container px-3 py-2 text-[16px] font-semibold text-error">
             <span class="material-symbols-outlined text-xl">warning</span>
             즉시 점검 필요
           </div>
@@ -78,24 +79,24 @@
                 <span class="material-symbols-outlined text-primary">speed</span>
                 <h3 class="text-[18px] font-bold">현재 수압</h3>
               </div>
-              <span class="whitespace-nowrap rounded-md bg-error-container px-2 py-1 text-[14px] font-bold text-error">위험</span>
+              <span id="detail-pressure-status" class="whitespace-nowrap rounded-md bg-error-container px-2 py-1 text-[14px] font-bold text-error">위험</span>
             </div>
             <div class="mt-2 flex items-end gap-2">
-              <span class="text-[44px] font-bold text-error">8.5</span>
+              <span id="detail-pressure" class="text-[44px] font-bold text-error">8.5</span>
               <span class="pb-1 text-[18px] text-slate-500">bar</span>
             </div>
           </div>
           <div class="rounded-2xl border p-5">
             <div class="flex items-center justify-between gap-2">
               <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary">device_thermostat</span>
-                <h3 class="text-[18px] font-bold">현재 온도</h3>
+                <span class="material-symbols-outlined text-primary">vibration</span>
+                <h3 class="text-[18px] font-bold">진동 이상 점수</h3>
               </div>
-              <span class="whitespace-nowrap rounded-md bg-surface-container px-2 py-1 text-[14px] font-bold text-slate-700">주의</span>
+              <span id="detail-vibration-status" class="whitespace-nowrap rounded-md bg-error-container px-2 py-1 text-[14px] font-bold text-error">위험</span>
             </div>
             <div class="mt-2 flex items-end gap-2">
-              <span class="text-[44px] font-bold text-primary">42</span>
-              <span class="pb-1 text-[18px] text-slate-500">°C</span>
+              <span id="detail-vibration" class="text-[44px] font-bold text-error">82</span>
+              <span class="pb-1 text-[18px] text-slate-500">점</span>
             </div>
           </div>
         </section>
@@ -130,7 +131,7 @@
             </svg>
           </div>
           <div class="mt-4 rounded-xl bg-white p-4 text-[16px] leading-6 text-slate-700">
-            <strong class="text-error">진동과 온도 상승</strong>이 동시 감지되어 연결부 베어링 또는 모터축의 마모 가능성이 높습니다.
+            <strong class="text-error">수압 급상승과 진동 이상 신호</strong>가 함께 감지되어 연결부 베어링 또는 모터축의 마모 가능성이 높습니다.
           </div>
         </section>
 
@@ -162,6 +163,19 @@
       </main>
     </div>
   </div>
+  <script src="demo-state.js"></script>
+  <script>
+    AquaGuardDemo.subscribe((state)=>{
+      document.getElementById('detail-pressure').textContent=state.pressure.toFixed(1);
+      document.getElementById('detail-vibration').textContent=state.vibration;
+      const status=document.getElementById('detail-status');
+      status.lastChild.textContent=` ${state.tone==='normal'?'정상 가동':state.label}`;
+      status.firstElementChild.textContent=state.tone==='normal'?'check_circle':state.tone==='recovery'?'settings_backup_restore':'warning';
+      status.className=`mt-3 inline-flex items-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-[16px] font-semibold ${state.tone==='normal'?'bg-teal-50 text-secondary':'bg-error-container text-error'}`;
+      const sensorLabel=state.tone==='normal'?'정상':state.label;
+      ['detail-pressure-status','detail-vibration-status'].forEach((id)=>{const badge=document.getElementById(id);badge.textContent=sensorLabel;badge.className=`whitespace-nowrap rounded-md px-2 py-1 text-[14px] font-bold ${state.tone==='normal'?'bg-teal-50 text-secondary':state.tone==='warning'?'bg-amber-100 text-amber-800':'bg-error-container text-error'}`});
+    });
+  </script>
   <script src="navigation.js"></script>
 </body>
 </html>
