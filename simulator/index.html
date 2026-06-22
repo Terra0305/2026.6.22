@@ -12,7 +12,7 @@
   <main class="mx-auto max-w-6xl px-8 py-10">
     <header class="flex items-center justify-between gap-8 border-b border-slate-700 pb-8">
       <div class="flex items-center gap-5"><img src="/assets/logo.png" alt="AquaGuard AI" class="h-20 w-20 rounded-2xl bg-white object-contain"/><div><p class="font-bold text-sky-400">HACKATHON CONTROL DESK</p><h1 class="mt-1 text-4xl font-black">센서 시나리오 시뮬레이터</h1></div></div>
-      <div class="text-right"><p class="text-sm text-slate-400">연결 상태 · Build 20260623.2</p><p class="mt-1 flex items-center gap-2 font-bold text-emerald-400"><span class="h-3 w-3 animate-pulse rounded-full bg-emerald-400"></span>기존 화면 실시간 연결</p></div>
+      <div class="text-right"><p class="text-sm text-slate-400">연결 상태 · Build 20260623.3</p><p class="mt-1 flex items-center gap-2 font-bold text-emerald-400"><span class="h-3 w-3 animate-pulse rounded-full bg-emerald-400"></span>기존 화면 실시간 연결</p></div>
     </header>
 
     <section class="mt-10 grid gap-8 lg:grid-cols-[1.5fr_1fr]">
@@ -43,7 +43,7 @@
       </aside>
     </section>
   </main>
-  <script src="/demo-state.js?v=20260623-2"></script>
+  <script src="/demo-state.js?v=20260623-3"></script>
   <script>
     const badgeColors={normal:'bg-emerald-500',warning:'bg-amber-400',danger:'bg-red-500 text-white',recovery:'bg-sky-400'};
     const pressure=document.getElementById('pressure'), vibration=document.getElementById('vibration'), statusBadge=document.getElementById('status-badge'), log=document.getElementById('event-log');
@@ -74,7 +74,7 @@
         addLog(`정상 상태 초기화 · ${state.pressure.toFixed(1)} bar`);
         return;
       }
-      const baseDurations={normal:6000,warning:3000,danger:4800,recovery:7000},minimumDurations={normal:2000,warning:1500,danger:2000,recovery:2000};
+      const baseDurations={normal:8000,warning:4000,danger:6000,recovery:9000},minimumDurations={normal:2500,warning:1800,danger:2500,recovery:2500};
       const referenceDistance={normal:{pressure:3.3,vibration:64},warning:{pressure:2.2,vibration:37},danger:{pressure:3.3,vibration:64},recovery:{pressure:2.2,vibration:50}};
       const reference=referenceDistance[targetId],distanceRatio=Math.min(1,Math.max(Math.abs(target.pressure-start.pressure)/reference.pressure,Math.abs(target.vibration-start.vibration)/reference.vibration));
       const duration=Math.max(minimumDurations[targetId],Math.round(baseDurations[targetId]*distanceRatio/100)*100);
