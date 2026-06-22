@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>알림 목록 - AquaGuard AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+  <script>tailwind.config={theme:{extend:{colors:{primary:'#001e40',secondary:'#006a6a',surface:'#ffffff','surface-container':'#eef2f7',error:'#ba1a1a','error-container':'#ffdad6'}}}};</script>
+  <style>body{background:#eef2f7;font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;word-break:keep-all}.phone-screen{height:calc(100% - 28px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 40}</style>
+</head>
+<body class="min-h-screen p-3 md:p-4">
+  <div class="mx-auto h-[844px] w-[390px] overflow-hidden rounded-[36px] border border-slate-200 bg-white shadow-2xl">
+    <div class="flex h-7 items-center justify-center"><div class="h-1.5 w-28 rounded-full bg-slate-900"></div></div>
+    <div class="phone-screen bg-white">
+      <header class="sticky top-0 z-40 border-b bg-white"><div class="flex h-16 items-center gap-3 px-4"><a href="index.html" aria-label="홈으로 돌아가기" class="rounded-full p-2 text-primary hover:bg-surface-container"><svg aria-hidden="true" class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg></a><h1 class="whitespace-nowrap text-[22px] font-bold text-primary">알림 목록</h1></div></header>
+      <main class="space-y-5 px-5 py-6">
+        <div class="flex items-center justify-between"><p id="unread-count" class="text-[18px] font-bold text-primary">새 알림 1건</p><button id="mark-all-read" type="button" class="whitespace-nowrap rounded-xl border px-3 py-2 text-[15px] font-bold text-slate-700">모두 읽음</button></div>
+        <section class="space-y-4" aria-label="알림">
+          <a id="danger-alert" href="detail.html" class="block rounded-2xl border border-l-[10px] border-error bg-white p-5 shadow-sm">
+            <div class="flex items-start justify-between gap-3"><span class="rounded-lg bg-error-container px-3 py-1 text-[15px] font-bold text-error">위험</span><time class="whitespace-nowrap text-[14px] text-slate-500">방금 전</time></div>
+            <h2 class="mt-3 text-[20px] font-bold text-primary">메인 펌프 A동 수압 이상</h2><p class="mt-2 text-[16px] leading-6 text-slate-700">현재 수압 8.5 bar입니다. 즉시 점검이 필요합니다.</p><p class="mt-3 flex items-center gap-1 font-bold text-error">장비 상세 보기 <span class="material-symbols-outlined">chevron_right</span></p>
+          </a>
+          <article class="rounded-2xl border border-l-[10px] border-amber-600 bg-white p-5 shadow-sm"><div class="flex items-start justify-between gap-3"><span class="rounded-lg bg-amber-100 px-3 py-1 text-[15px] font-bold text-amber-800">주의</span><time class="whitespace-nowrap text-[14px] text-slate-500">2시간 전</time></div><h2 class="mt-3 text-[20px] font-bold text-primary">B동 수조 필터 점검 예정</h2><p class="mt-2 text-[16px] leading-6 text-slate-700">정기 필터 점검일이 3일 남았습니다.</p></article>
+          <article class="rounded-2xl border bg-slate-50 p-5"><div class="flex items-start justify-between gap-3"><span class="rounded-lg bg-teal-50 px-3 py-1 text-[15px] font-bold text-secondary">완료</span><time class="whitespace-nowrap text-[14px] text-slate-500">어제</time></div><h2 class="mt-3 text-[20px] font-bold text-primary">일일 안전 점검 완료</h2><p class="mt-2 text-[16px] text-slate-700">총 42대 장비의 자동 점검을 완료했습니다.</p></article>
+        </section>
+      </main>
+      <nav class="sticky bottom-0 z-50 flex items-center justify-around border-t bg-white px-2 pb-4 pt-3" aria-label="주요 메뉴">
+        <a href="index.html" class="flex min-w-[64px] flex-col items-center gap-1 rounded-xl p-2"><span class="material-symbols-outlined text-3xl">home</span><span class="font-bold">홈</span></a>
+        <a href="tanks.html" class="flex min-w-[64px] flex-col items-center gap-1 rounded-xl p-2"><span class="material-symbols-outlined text-3xl">waves</span><span class="font-bold">수조</span></a>
+        <a href="alerts.html" aria-current="page" class="flex min-w-[72px] flex-col items-center gap-1 rounded-xl border border-secondary bg-teal-50 p-2 text-secondary"><span class="material-symbols-outlined text-3xl">notifications</span><span class="font-bold">알림</span></a>
+        <a href="settings.html" class="flex min-w-[64px] flex-col items-center gap-1 rounded-xl p-2"><span class="material-symbols-outlined text-3xl">settings</span><span class="font-bold">설정</span></a>
+      </nav>
+    </div>
+  </div>
+  <script>
+    document.getElementById('mark-all-read').addEventListener('click', () => {
+      document.getElementById('unread-count').textContent = '새 알림 없음';
+      const alertCard = document.getElementById('danger-alert');
+      alertCard.classList.remove('border-l-error');
+      alertCard.classList.add('border-l-slate-300', 'bg-slate-50');
+    });
+  </script>
+  <script src="navigation.js"></script>
+</body>
+</html>
