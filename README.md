@@ -3,7 +3,7 @@
 ## 실행
 
 ```bash
-node server.mjs
+node local-server.mjs
 ```
 
 - 왼쪽 브라우저: `http://localhost:4173/simulator`
