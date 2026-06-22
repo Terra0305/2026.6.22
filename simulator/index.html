@@ -57,8 +57,11 @@
     function toneFor(pressureValue,vibrationValue){if(pressureValue>=8||vibrationValue>=75)return 'danger';if(pressureValue>=7||vibrationValue>=50)return 'warning';return 'normal'}
     function wait(ms){return new Promise((resolve)=>setTimeout(resolve,ms))}
     async function animateScenario(targetId){
-      const durations={normal:12000,warning:7400,danger:15000,recovery:12000},duration=durations[targetId],interval=targetId==='warning'?200:300,steps=Math.ceil(duration/interval);
+      const baseDurations={normal:12000,warning:7400,danger:15000,recovery:12000},minimumDurations={normal:3500,warning:2500,danger:4500,recovery:3500};
+      const referenceDistance={normal:{pressure:3.3,vibration:64},warning:{pressure:2.2,vibration:37},danger:{pressure:3.3,vibration:64},recovery:{pressure:2.2,vibration:50}};
       const token=++animationToken,start=AquaGuardDemo.read(),target=AquaGuardDemo.scenarios[targetId],eventId=`sequence-${Date.now()}-${Math.random()}`;
+      const reference=referenceDistance[targetId],distanceRatio=Math.min(1,Math.max(Math.abs(target.pressure-start.pressure)/reference.pressure,Math.abs(target.vibration-start.vibration)/reference.vibration));
+      const duration=Math.max(minimumDurations[targetId],Math.round(baseDurations[targetId]*distanceRatio/100)*100),interval=targetId==='warning'?200:300,steps=Math.ceil(duration/interval);
       let history=(start.history||AquaGuardDemo.scenarios.normal.history).slice(-11),lastTone=start.tone,notified=false;
       document.getElementById('animation-status').textContent=`${target.label} 시나리오 진행 중`;
       addLog(`${target.label} 시나리오 시작`);
