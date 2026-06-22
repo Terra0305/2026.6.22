@@ -1,5 +1,5 @@
 (function () {
-  const STORAGE_KEY = 'aquaguard-demo-state-v3';
+  const STORAGE_KEY = 'aquaguard-demo-state-v4';
   const CHANNEL_NAME = 'aquaguard-demo-channel';
 
   const scenarios = {
@@ -129,7 +129,7 @@
         if (current.transitionProgress >= 1 && timer) { clearInterval(timer); timer = null; }
       };
       tick();
-      timer = setInterval(tick, 200);
+      timer = setInterval(tick, 100);
     }
     deliver(read());
     if (channel) channel.addEventListener('message', (event) => deliver(event.data));
