@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>수조 현황 - AquaGuard AI</title>
+  <link rel="icon" type="image/png" href="assets/logo.png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
   <script>tailwind.config={theme:{extend:{colors:{primary:'#001e40',secondary:'#006a6a',surface:'#ffffff','surface-container':'#eef2f7',error:'#ba1a1a','error-container':'#ffdad6'}}}};</script>
@@ -26,11 +27,11 @@
       <main class="space-y-5 px-5 py-6">
         <section class="rounded-2xl border-2 border-secondary bg-teal-50 p-5">
           <p class="text-[16px] font-semibold text-slate-600">전체 수조</p>
-          <div class="mt-2 flex items-end justify-between"><strong class="text-[36px] text-primary">10개</strong><span class="whitespace-nowrap rounded-full bg-white px-3 py-2 text-[16px] font-bold text-secondary">9개 정상</span></div>
+          <div class="mt-2 flex items-end justify-between"><strong class="text-[36px] text-primary">10개</strong><span id="tank-normal-count" class="whitespace-nowrap rounded-full bg-white px-3 py-2 text-[16px] font-bold text-secondary">9개 정상</span></div>
         </section>
         <section class="space-y-3" aria-label="수조 목록">
-          <a href="detail.html" class="flex items-center justify-between rounded-2xl border-2 border-error bg-error-container p-4">
-            <div class="flex items-center gap-3"><span class="material-symbols-outlined text-4xl text-error">waves</span><div><h2 class="text-[20px] font-bold text-primary">A동 3번 수조</h2><p class="mt-1 text-[16px] font-semibold text-error">펌프 수압 이상</p></div></div><span class="material-symbols-outlined text-error">chevron_right</span>
+          <a id="live-tank-card" href="detail.html" class="flex items-center justify-between rounded-2xl border-2 border-error bg-error-container p-4">
+            <div class="flex items-center gap-3"><span id="live-tank-icon" class="material-symbols-outlined text-4xl text-error">waves</span><div><h2 class="text-[20px] font-bold text-primary">A동 3번 수조</h2><p id="live-tank-message" class="mt-1 text-[16px] font-semibold text-error">펌프 수압 이상</p></div></div><span class="material-symbols-outlined text-error">chevron_right</span>
           </a>
           <div class="flex items-center justify-between rounded-2xl border p-4"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-4xl text-secondary">waves</span><div><h2 class="text-[20px] font-bold text-primary">A동 1번 수조</h2><p class="mt-1 text-[16px] text-slate-600">수질 및 장비 정상</p></div></div><span class="whitespace-nowrap rounded-full bg-teal-50 px-3 py-1 font-bold text-secondary">정상</span></div>
           <div class="flex items-center justify-between rounded-2xl border p-4"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-4xl text-secondary">waves</span><div><h2 class="text-[20px] font-bold text-primary">A동 2번 수조</h2><p class="mt-1 text-[16px] text-slate-600">수질 및 장비 정상</p></div></div><span class="whitespace-nowrap rounded-full bg-teal-50 px-3 py-1 font-bold text-secondary">정상</span></div>
@@ -45,6 +46,15 @@
       </nav>
     </div>
   </div>
+  <script src="demo-state.js"></script>
+  <script>
+    AquaGuardDemo.subscribe((state)=>{
+      const counts={normal:10,warning:9,danger:9,recovery:9};document.getElementById('tank-normal-count').textContent=`${counts[state.tone]}개 정상`;
+      const card=document.getElementById('live-tank-card'),icon=document.getElementById('live-tank-icon'),message=document.getElementById('live-tank-message');
+      const config={normal:{text:'수질 및 장비 정상',card:'border-secondary bg-teal-50',color:'text-secondary',icon:'check_circle'},warning:{text:'펌프 센서값 주의',card:'border-amber-600 bg-amber-50',color:'text-amber-800',icon:'error'},danger:{text:'펌프 수압 이상 · 즉시 점검',card:'border-error bg-error-container',color:'text-error',icon:'warning'},recovery:{text:'펌프 상태 복구 중',card:'border-sky-600 bg-sky-50',color:'text-sky-800',icon:'settings_backup_restore'}}[state.tone];
+      card.className=`flex items-center justify-between rounded-2xl border-2 p-4 ${config.card}`;icon.textContent=config.icon;icon.className=`material-symbols-outlined text-4xl ${config.color}`;message.textContent=config.text;message.className=`mt-1 text-[16px] font-semibold ${config.color}`;
+    });
+  </script>
   <script src="navigation.js"></script>
 </body>
 </html>

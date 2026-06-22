@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>홈 - AquaGuard AI</title>
+  <link rel="icon" type="image/png" href="assets/logo.png" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
   <script>
@@ -73,14 +74,14 @@
   </style>
 </head>
 <body class="min-h-screen bg-[#eef2f7] p-3 md:p-4">
-  <div class="phone-frame mx-auto h-[844px] w-[390px] overflow-hidden rounded-[36px] border border-slate-200 bg-white">
+  <div class="phone-frame relative mx-auto h-[844px] w-[390px] overflow-hidden rounded-[36px] border border-slate-200 bg-white">
     <div class="flex h-7 items-center justify-center bg-white">
       <div class="h-1.5 w-28 rounded-full bg-slate-900"></div>
     </div>
     <div class="phone-screen bg-white">
       <header class="sticky top-0 z-40 border-b border-outline bg-surface">
         <div class="flex h-16 w-full items-center justify-between px-margin-mobile">
-          <div class="h-12 w-12" aria-hidden="true"></div>
+          <img src="assets/logo.png" alt="AquaGuard AI 로고" class="h-12 w-12 rounded-full object-contain" />
           <h1 class="text-[22px] font-bold text-primary">AquaGuard AI</h1>
           <a href="account.html" aria-label="계정" class="rounded-full p-2 hover:bg-surface-container-high">
             <span class="material-symbols-outlined text-3xl text-primary">account_circle</span>
@@ -89,12 +90,12 @@
       </header>
 
       <main class="mx-auto max-w-7xl px-margin-mobile py-6">
-        <a href="detail.html" aria-label="위험 장비 메인 펌프 A동 상세 보기" class="interactive-card block rounded-2xl border-2 border-error bg-error-container p-5 text-on-error-container">
+        <a id="live-alert" href="detail.html" aria-label="장비 상태 상세 보기" class="interactive-card block rounded-2xl border-2 border-error bg-error-container p-5 text-on-error-container">
           <div class="flex items-start gap-3">
-            <span class="material-symbols-outlined text-5xl text-error">warning</span>
+            <span id="live-alert-icon" class="material-symbols-outlined text-5xl text-error">warning</span>
             <div class="min-w-0 flex-1">
-              <h2 class="text-[24px] font-bold">위험 장비 1대 감지</h2>
-              <p class="mt-1 text-[18px] font-semibold leading-6">메인 펌프 A동 수압 이상.<br />즉각적인 점검이 필요합니다.</p>
+              <h2 id="live-alert-title" class="text-[24px] font-bold">위험 장비 1대 감지</h2>
+              <p id="live-alert-message" class="mt-1 text-[18px] font-semibold leading-6">메인 펌프 A동 수압 이상.<br />즉각적인 점검이 필요합니다.</p>
             </div>
             <span class="material-symbols-outlined mt-2 text-3xl text-error">chevron_right</span>
           </div>
@@ -107,43 +108,43 @@
               <span class="material-symbols-outlined text-3xl text-primary">verified_user</span>
             </div>
             <div class="mt-3 text-[38px] font-bold text-primary">무사고 128일</div>
-            <div class="mt-3 inline-flex items-center gap-2 rounded-full bg-secondary/10 px-3 py-1.5 text-[15px] font-semibold text-on-secondary-container">
+              <div id="live-operation-status" class="mt-3 inline-flex items-center gap-2 rounded-full bg-secondary/10 px-3 py-1.5 text-[15px] font-semibold text-on-secondary-container">
               <span class="h-2.5 w-2.5 rounded-full bg-secondary"></span>
               정상 가동 중
             </div>
           </div>
 
-          <div class="grid gap-4 sm:grid-cols-2">
-            <a href="detail.html" class="interactive-card flex items-center justify-between rounded-2xl border border-outline bg-surface-container-lowest p-4">
+          <div class="grid gap-4">
+            <a id="running-card" href="detail.html" class="interactive-card flex items-center justify-between rounded-2xl border border-outline bg-surface-container-lowest p-4">
               <div class="flex items-center gap-3">
                 <span class="material-symbols-outlined text-4xl text-primary">settings_suggest</span>
                 <div>
                   <p class="whitespace-nowrap text-[15px] font-semibold text-on-surface-variant">가동 중 장비</p>
-                  <p class="text-[32px] font-bold text-primary">42대</p>
+                  <p class="text-[32px] font-bold text-primary"><span id="running-count">42</span>대</p>
                 </div>
               </div>
               <span class="material-symbols-outlined text-2xl text-outline">arrow_forward</span>
             </a>
 
-            <a href="detail.html" class="interactive-card flex items-center justify-between rounded-2xl border border-error bg-error-container/10 p-4">
+            <a id="inspection-card" href="detail.html" class="interactive-card flex items-center justify-between rounded-2xl border border-error bg-error-container/10 p-4">
               <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-4xl text-error">build</span>
+                <span id="inspection-icon" class="material-symbols-outlined text-4xl text-error">build</span>
                 <div>
                   <p class="whitespace-nowrap text-[15px] font-semibold text-on-surface-variant">점검 필요</p>
-                  <p class="text-[32px] font-bold text-error">3대</p>
+                  <p id="inspection-count-wrap" class="text-[32px] font-bold text-error"><span id="inspection-count">3</span>대</p>
                 </div>
               </div>
               <span class="material-symbols-outlined text-2xl text-outline">arrow_forward</span>
             </a>
 
-            <a href="tanks.html" class="interactive-card sm:col-span-2 flex items-center justify-between rounded-2xl border border-outline bg-surface-container-lowest p-4">
+            <a href="tanks.html" class="interactive-card flex items-center justify-between rounded-2xl border border-outline bg-surface-container-lowest p-4">
               <div class="flex items-center gap-3">
                 <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                   <span class="material-symbols-outlined text-2xl text-primary">water_drop</span>
                 </div>
                 <div>
-                  <p class="whitespace-nowrap text-[20px] font-bold text-on-surface">수조 상태 양호</p>
-                  <p class="whitespace-nowrap text-[15px] text-on-surface-variant">9/10 수조 정상</p>
+                  <p id="tank-status-title" class="whitespace-nowrap text-[20px] font-bold text-on-surface">수조 상태 양호</p>
+                  <p id="tank-status-count" class="whitespace-nowrap text-[15px] text-on-surface-variant">9/10 수조 정상</p>
                 </div>
               </div>
               <span class="material-symbols-outlined text-2xl text-outline">arrow_forward</span>
@@ -166,11 +167,11 @@
               <div class="space-y-2">
                 <div class="flex items-center justify-between rounded-xl bg-surface-container p-3">
                   <span class="whitespace-nowrap text-[15px] font-semibold text-on-surface">현재 수압</span>
-                  <div class="flex items-center gap-1 whitespace-nowrap text-[18px] font-bold text-error">8.5 bar <span class="material-symbols-outlined text-xl">arrow_upward</span></div>
+                  <div class="flex items-center gap-1 whitespace-nowrap text-[18px] font-bold text-error"><span id="live-pressure">8.5</span> bar <span class="material-symbols-outlined text-xl">arrow_upward</span></div>
                 </div>
                 <div class="flex items-center justify-between rounded-xl bg-surface-container p-3">
-                  <span class="whitespace-nowrap text-[15px] font-semibold text-on-surface">온도</span>
-                  <span class="whitespace-nowrap text-[18px] font-bold text-on-surface">42°C</span>
+                  <span class="whitespace-nowrap text-[15px] font-semibold text-on-surface">진동 이상 점수</span>
+                  <span class="whitespace-nowrap text-[18px] font-bold text-error"><span id="live-vibration">82</span>점</span>
                 </div>
               </div>
               <a href="detail.html" class="block w-full rounded-xl bg-primary py-4 text-center text-[18px] font-bold text-on-primary">자세히 보기</a>
@@ -192,7 +193,7 @@
           <a href="alerts.html" aria-label="알림" class="flex min-w-[64px] flex-col items-center gap-1 rounded-xl p-2 text-on-surface-variant">
             <div class="relative">
               <span class="material-symbols-outlined text-3xl">notifications</span>
-              <span class="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-surface-container-lowest bg-error"></span>
+              <span id="home-unread-dot" class="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-surface-container-lowest bg-error"></span>
             </div>
             <span class="text-[15px] font-bold">알림</span>
           </a>
@@ -203,7 +204,57 @@
         </div>
       </nav>
     </div>
+
+    <section id="mobile-emergency" class="absolute inset-0 z-[100] hidden flex-col bg-error text-white" role="alertdialog" aria-modal="true" aria-labelledby="mobile-emergency-title">
+      <div class="flex h-28 items-center justify-between bg-[#93000a] px-6">
+        <img src="assets/logo.png" alt="AquaGuard AI" class="h-16 w-16 rounded-2xl bg-white object-contain" />
+        <span class="material-symbols-outlined text-6xl">warning</span>
+      </div>
+      <div class="flex flex-1 flex-col px-7 py-8">
+        <p class="text-[18px] font-bold text-red-100">AquaGuard AI 긴급 경고</p>
+        <h2 id="mobile-emergency-title" class="mt-3 text-[34px] font-black leading-tight">메인 펌프 A동<br />즉시 점검 필요</h2>
+        <p class="mt-3 text-[18px] font-semibold leading-7 text-red-100">위험 기준을 초과한 센서값이 감지되었습니다.</p>
+        <div class="mt-7 grid grid-cols-2 gap-3">
+          <div class="rounded-2xl bg-white/15 p-4"><p class="text-red-100">현재 수압</p><p class="mt-1 whitespace-nowrap text-[28px] font-black"><span id="mobile-emergency-pressure">8.5</span> bar</p></div>
+          <div class="rounded-2xl bg-white/15 p-4"><p class="text-red-100">진동 점수</p><p class="mt-1 whitespace-nowrap text-[28px] font-black"><span id="mobile-emergency-vibration">82</span>점</p></div>
+        </div>
+        <div class="mt-5 rounded-2xl bg-white p-5 text-error"><p class="font-bold">AI 의심 부위</p><p class="mt-1 whitespace-nowrap text-[25px] font-black">베어링 / 모터축</p></div>
+        <button id="mobile-emergency-close" type="button" class="mt-auto rounded-2xl bg-white py-5 text-[20px] font-black text-error shadow-xl">경고 확인</button>
+      </div>
+    </section>
   </div>
+  <script src="demo-state.js"></script>
+  <script>
+    const liveTones={normal:{box:'border-secondary bg-teal-50 text-teal-900',icon:'verified',iconColor:'text-secondary',title:'모든 장비 정상',status:'정상 가동 중',statusClass:'bg-secondary/10 text-on-secondary-container',running:45,inspection:0,tanks:'10/10',tankTitle:'모든 수조 정상'},warning:{box:'border-amber-600 bg-amber-50 text-amber-900',icon:'error',iconColor:'text-amber-700',title:'주의 장비 1대 감지',status:'주의 관찰 중',statusClass:'bg-amber-100 text-amber-800',running:44,inspection:1,tanks:'9/10',tankTitle:'수조 1곳 주의'},danger:{box:'border-error bg-error-container text-on-error-container',icon:'warning',iconColor:'text-error',title:'위험 장비 1대 감지',status:'즉시 점검 필요',statusClass:'bg-error-container text-error',running:42,inspection:3,tanks:'9/10',tankTitle:'수조 1곳 점검 필요'},recovery:{box:'border-sky-600 bg-sky-50 text-sky-900',icon:'settings_backup_restore',iconColor:'text-sky-700',title:'장비 복구 중',status:'복구 상태 확인 중',statusClass:'bg-sky-100 text-sky-800',running:43,inspection:2,tanks:'9/10',tankTitle:'수조 상태 복구 중'}};
+    let acknowledgedEmergency=null;
+    function renderLiveState(state){
+      document.getElementById('live-pressure').textContent=state.pressure.toFixed(1);
+      document.getElementById('live-vibration').textContent=state.vibration;
+      const tone=liveTones[state.tone], alert=document.getElementById('live-alert');
+      alert.className=`interactive-card block rounded-2xl border-2 p-5 ${tone.box}`;
+      const icon=document.getElementById('live-alert-icon'); icon.textContent=tone.icon; icon.className=`material-symbols-outlined text-5xl ${tone.iconColor}`;
+      document.getElementById('live-alert-title').textContent=tone.title;
+      document.getElementById('live-alert-message').textContent=state.message;
+      const operation=document.getElementById('live-operation-status'); operation.lastChild.textContent=` ${tone.status}`; operation.className=`mt-3 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[15px] font-semibold ${tone.statusClass}`;
+      document.getElementById('running-count').textContent=tone.running;
+      document.getElementById('inspection-count').textContent=tone.inspection;
+      const inspection=document.getElementById('inspection-card'),inspectionIcon=document.getElementById('inspection-icon'),inspectionCount=document.getElementById('inspection-count-wrap');
+      if(tone.inspection===0){inspection.className='interactive-card flex items-center justify-between rounded-2xl border border-secondary bg-teal-50 p-4';inspectionIcon.className='material-symbols-outlined text-4xl text-secondary';inspectionIcon.textContent='check_circle';inspectionCount.className='text-[32px] font-bold text-secondary'}else{inspection.className=`interactive-card flex items-center justify-between rounded-2xl border p-4 ${state.tone==='warning'?'border-amber-600 bg-amber-50':'border-error bg-error-container/10'}`;inspectionIcon.className=`material-symbols-outlined text-4xl ${state.tone==='warning'?'text-amber-700':'text-error'}`;inspectionIcon.textContent='build';inspectionCount.className=`text-[32px] font-bold ${state.tone==='warning'?'text-amber-700':'text-error'}`}
+      document.getElementById('tank-status-title').textContent=tone.tankTitle;
+      document.getElementById('tank-status-count').textContent=`${tone.tanks} 수조 정상`;
+      const emergency=document.getElementById('mobile-emergency');
+      if(state.tone==='danger'&&acknowledgedEmergency!==state.eventId){
+        document.getElementById('mobile-emergency-pressure').textContent=state.pressure.toFixed(1);
+        document.getElementById('mobile-emergency-vibration').textContent=state.vibration;
+        emergency.style.display='flex';
+      }else{emergency.style.display='none'}
+      window.currentLiveState=state;
+      const readEvent=localStorage.getItem('aquaguard-last-read-event');document.getElementById('home-unread-dot').classList.toggle('hidden',readEvent===state.eventId);
+    }
+    AquaGuardDemo.subscribe(renderLiveState);
+    window.addEventListener('storage',(event)=>{if(event.key==='aquaguard-last-read-event'&&window.currentLiveState)renderLiveState(window.currentLiveState)});
+    document.getElementById('mobile-emergency-close').addEventListener('click',()=>{acknowledgedEmergency=window.currentLiveState.eventId;renderLiveState(window.currentLiveState)});
+  </script>
   <script src="navigation.js"></script>
 </body>
 </html>
