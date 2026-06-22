@@ -46,43 +46,36 @@
   <script src="/demo-state.js"></script>
   <script>
     const badgeColors={normal:'bg-emerald-500',warning:'bg-amber-400',danger:'bg-red-500 text-white',recovery:'bg-sky-400'};
+    const pressure=document.getElementById('pressure'), vibration=document.getElementById('vibration'), statusBadge=document.getElementById('status-badge'), log=document.getElementById('event-log');
+    let lastTone=null,completedEvent=null;
+    function addLog(text){const item=document.createElement('li');item.className='rounded-xl bg-slate-800 p-3';item.textContent=`${new Date().toLocaleTimeString()} · ${text}`;log.prepend(item)}
     function render(state){
       pressure.textContent=state.pressure.toFixed(1); vibration.textContent=state.vibration; statusBadge.textContent=state.label;
       statusBadge.className=`rounded-full px-4 py-2 font-bold text-slate-950 ${badgeColors[state.tone]}`;
+      if(state.transition){
+        const percent=Math.round((state.transitionProgress||0)*100),remaining=Math.max(0,Math.ceil((state.transition.duration-(Date.now()-state.transition.startedAt))/1000));
+        document.getElementById('animation-percent').textContent=`${percent}% · ${remaining}초`;document.getElementById('animation-progress').style.width=`${percent}%`;
+        document.getElementById('animation-status').textContent=percent>=100?`${AquaGuardDemo.scenarios[state.transition.targetId].label} 시나리오 완료`:`${AquaGuardDemo.scenarios[state.transition.targetId].label} 시나리오 진행 중`;
+        if(percent>=100&&completedEvent!==state.eventId){completedEvent=state.eventId;addLog(`${AquaGuardDemo.scenarios[state.transition.targetId].label} 목표값 도달`)}
+      }
+      if(lastTone&&lastTone!==state.tone)addLog(`${state.label} 기준 진입`);
+      if(state.tone==='danger'&&lastTone!=='danger')AquaGuardDemo.notifyDanger(state);
+      lastTone=state.tone;
     }
-    const pressure=document.getElementById('pressure'), vibration=document.getElementById('vibration'), statusBadge=document.getElementById('status-badge'), log=document.getElementById('event-log');
     AquaGuardDemo.subscribe(render);
-    let animationToken=0;
-    function addLog(text){const item=document.createElement('li');item.className='rounded-xl bg-slate-800 p-3';item.textContent=`${new Date().toLocaleTimeString()} · ${text}`;log.prepend(item)}
-    function toneFor(pressureValue,vibrationValue){if(pressureValue>=8||vibrationValue>=75)return 'danger';if(pressureValue>=7||vibrationValue>=50)return 'warning';return 'normal'}
-    function wait(ms){return new Promise((resolve)=>setTimeout(resolve,ms))}
-    async function animateScenario(targetId){
+    function startScenario(targetId){
       const baseDurations={normal:12000,warning:7400,danger:15000,recovery:12000},minimumDurations={normal:3500,warning:2500,danger:4500,recovery:3500};
       const referenceDistance={normal:{pressure:3.3,vibration:64},warning:{pressure:2.2,vibration:37},danger:{pressure:3.3,vibration:64},recovery:{pressure:2.2,vibration:50}};
-      const token=++animationToken,start=AquaGuardDemo.read(),target=AquaGuardDemo.scenarios[targetId],eventId=`sequence-${Date.now()}-${Math.random()}`;
+      const start=AquaGuardDemo.materialize(AquaGuardDemo.read()),target=AquaGuardDemo.scenarios[targetId];
       const reference=referenceDistance[targetId],distanceRatio=Math.min(1,Math.max(Math.abs(target.pressure-start.pressure)/reference.pressure,Math.abs(target.vibration-start.vibration)/reference.vibration));
-      const duration=Math.max(minimumDurations[targetId],Math.round(baseDurations[targetId]*distanceRatio/100)*100),interval=targetId==='warning'?200:300,steps=Math.ceil(duration/interval);
-      let history=(start.history||AquaGuardDemo.scenarios.normal.history).slice(-11),lastTone=start.tone,notified=false;
-      document.getElementById('animation-status').textContent=`${target.label} 시나리오 진행 중`;
+      const duration=Math.max(minimumDurations[targetId],Math.round(baseDurations[targetId]*distanceRatio/100)*100);
+      completedEvent=null;
       addLog(`${target.label} 시나리오 시작`);
-      for(let step=1;step<=steps;step++){
-        if(token!==animationToken)return;
-        const linear=step/steps,eased=linear<.5?2*linear*linear:1-Math.pow(-2*linear+2,2)/2;
-        const pressureValue=start.pressure+(target.pressure-start.pressure)*eased,vibrationValue=Math.round(start.vibration+(target.vibration-start.vibration)*eased);
-        const tone=targetId==='recovery'?'recovery':toneFor(pressureValue,vibrationValue),toneData=AquaGuardDemo.scenarios[tone];
-        history=[...history.slice(-11),Number(pressureValue.toFixed(2))];
-        const state=AquaGuardDemo.publishLive({...toneData,id:targetId,tone,label:toneData.label,pressure:Number(pressureValue.toFixed(2)),vibration:vibrationValue,history:[...history],eventId});
-        if(tone!==lastTone){addLog(`${toneData.label} 기준 진입`);lastTone=tone}
-        if(tone==='danger'&&!notified){AquaGuardDemo.notifyDanger(state);notified=true}
-        const percent=Math.round(linear*100),remaining=Math.max(0,Math.ceil((duration-step*interval)/1000));document.getElementById('animation-percent').textContent=`${percent}% · ${remaining}초`;document.getElementById('animation-progress').style.width=`${percent}%`;
-        await wait(interval);
-      }
-      if(token!==animationToken)return;
-      document.getElementById('animation-status').textContent=`${target.label} 시나리오 완료`;addLog(`${target.label} 목표값 도달`);
+      AquaGuardDemo.startTransition(targetId,duration);
     }
     document.querySelectorAll('[data-scenario]').forEach((button)=>button.addEventListener('click',async()=>{
       if(button.dataset.scenario==='danger'&&'Notification' in window&&Notification.permission==='default')await AquaGuardDemo.requestNotifications();
-      animateScenario(button.dataset.scenario);
+      startScenario(button.dataset.scenario);
     }));
     document.getElementById('notification-permission').addEventListener('click',async(event)=>{
       const result=await AquaGuardDemo.requestNotifications(); event.currentTarget.textContent=result==='granted'?'브라우저 알림 사용 중':'브라우저 알림이 차단됨';
