@@ -88,4 +88,4 @@ node local-server.mjs
 
 ## 만든 사람
 
-AquaGuard AI Team
+박성민 조찬형 정회윤 이은진
