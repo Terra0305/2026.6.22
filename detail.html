@@ -101,7 +101,7 @@
           </div>
         </section>
 
-        <section class="rounded-2xl border-2 border-error bg-error-container/30 p-5" aria-labelledby="suspect-area-title">
+        <section id="suspect-analysis" class="rounded-2xl border-2 border-error bg-error-container/30 p-5" aria-labelledby="suspect-area-title">
           <div class="flex items-start justify-between gap-3">
             <div>
               <p class="text-[15px] font-semibold text-slate-600">AI 이상 분석 결과</p>
@@ -166,14 +166,22 @@
   <script src="demo-state.js?v=20260623-6"></script>
   <script>
     AquaGuardDemo.subscribe((state)=>{
-      document.getElementById('detail-pressure').textContent=state.pressure.toFixed(1);
-      document.getElementById('detail-vibration').textContent=state.vibration;
+      const isNormal=state.tone==='normal';
+      const pressure=document.getElementById('detail-pressure');
+      const vibration=document.getElementById('detail-vibration');
+      pressure.textContent=state.pressure.toFixed(1);
+      vibration.textContent=state.vibration;
+      pressure.className=`text-[44px] font-bold ${isNormal?'text-secondary':state.tone==='warning'?'text-amber-700':'text-error'}`;
+      vibration.className=`text-[44px] font-bold ${isNormal?'text-secondary':state.tone==='warning'?'text-amber-700':'text-error'}`;
       const status=document.getElementById('detail-status');
-      status.lastChild.textContent=` ${state.tone==='normal'?'정상 가동':state.label}`;
-      status.firstElementChild.textContent=state.tone==='normal'?'check_circle':state.tone==='recovery'?'settings_backup_restore':'warning';
-      status.className=`mt-3 inline-flex items-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-[16px] font-semibold ${state.tone==='normal'?'bg-teal-50 text-secondary':'bg-error-container text-error'}`;
-      const sensorLabel=state.tone==='normal'?'정상':state.label;
-      ['detail-pressure-status','detail-vibration-status'].forEach((id)=>{const badge=document.getElementById(id);badge.textContent=sensorLabel;badge.className=`whitespace-nowrap rounded-md px-2 py-1 text-[14px] font-bold ${state.tone==='normal'?'bg-teal-50 text-secondary':state.tone==='warning'?'bg-amber-100 text-amber-800':'bg-error-container text-error'}`});
+      status.lastChild.textContent=` ${isNormal?'정상 가동':state.label}`;
+      status.firstElementChild.textContent=isNormal?'check_circle':state.tone==='recovery'?'settings_backup_restore':'warning';
+      status.className=`mt-3 inline-flex items-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-[16px] font-semibold ${isNormal?'bg-teal-50 text-secondary':'bg-error-container text-error'}`;
+      const suspectAnalysis=document.getElementById('suspect-analysis');
+      suspectAnalysis.classList.toggle('hidden',isNormal);
+      suspectAnalysis.setAttribute('aria-hidden',String(isNormal));
+      const sensorLabel=isNormal?'정상':state.label;
+      ['detail-pressure-status','detail-vibration-status'].forEach((id)=>{const badge=document.getElementById(id);badge.textContent=sensorLabel;badge.className=`whitespace-nowrap rounded-md px-2 py-1 text-[14px] font-bold ${isNormal?'bg-teal-50 text-secondary':state.tone==='warning'?'bg-amber-100 text-amber-800':'bg-error-container text-error'}`});
     });
   </script>
   <script src="navigation.js"></script>
