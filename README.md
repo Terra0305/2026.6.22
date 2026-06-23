@@ -1,7 +1,7 @@
 # AquaGuard AI
 
 조선대학교 AI부트캠프 해커톤 우승작
-
+발표 PPT: https://www.canva.com/design/DAHNQ6zTlEk/c4ndsNDftl_H7CTK8wJUSA/edit
 양식장 IoT 센서 데이터를 기반으로 펌프·수조 설비 이상을 실시간으로 감지하고, 관리자에게 직관적인 경고와 AI 의심 분석 결과를 제공하는 모바일 최적화 웹 데모입니다.
 
 ## 프로젝트 개요
