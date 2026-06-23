@@ -6,24 +6,47 @@
   <title>AquaGuard AI 센서 시뮬레이터</title>
   <link rel="icon" href="/assets/logo.png" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;word-break:keep-all}.scenario:focus-visible{outline:4px solid #38bdf8;outline-offset:4px}</style>
+  <style>
+    body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;word-break:keep-all}
+    .scenario:focus-visible,.hotspot:focus-visible{outline:4px solid #38bdf8;outline-offset:4px}
+    .farm-stage{position:relative;min-height:470px;overflow:hidden;border-radius:32px;border:1px solid rgba(148,163,184,.45);background-image:linear-gradient(180deg,rgba(2,6,23,.04),rgba(2,6,23,.7)),url('/assets/farm-demo.svg');background-size:cover;background-position:center;box-shadow:0 22px 80px rgba(0,0,0,.35)}
+    .farm-stage::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 68% 53%,rgba(248,113,113,.26),transparent 18%),linear-gradient(90deg,rgba(2,6,23,.68),transparent 48%,rgba(2,6,23,.18));pointer-events:none}
+    .hotspot{position:absolute;z-index:2;display:flex;align-items:center;gap:12px;border:2px solid rgba(255,255,255,.75);border-radius:999px;padding:14px 18px;font-weight:900;box-shadow:0 16px 36px rgba(0,0,0,.38),0 0 0 8px rgba(255,255,255,.08);transition:transform .18s ease,filter .18s ease}
+    .hotspot:hover{transform:translateY(-3px) scale(1.02);filter:brightness(1.08)}
+    .hotspot-danger{right:11%;top:45%;background:rgba(239,68,68,.92)}
+    .hotspot-normal{left:9%;top:16%;background:rgba(16,185,129,.92);color:#022c22}
+    .pulse-ring{position:absolute;z-index:1;border:3px solid rgba(248,113,113,.92);border-radius:999px;animation:ring 1.7s infinite;right:20%;top:49%;width:92px;height:92px}
+    @keyframes ring{0%{transform:scale(.72);opacity:.95}100%{transform:scale(1.55);opacity:0}}
+  </style>
 </head>
 <body class="min-h-screen bg-slate-950 text-white">
   <main class="mx-auto max-w-6xl px-8 py-10">
     <header class="flex items-center justify-between gap-8 border-b border-slate-700 pb-8">
-      <div class="flex items-center gap-5"><img src="/assets/logo.png" alt="AquaGuard AI" class="h-20 w-20 rounded-2xl bg-white object-contain"/><div><p class="font-bold text-sky-400">HACKATHON CONTROL DESK</p><h1 class="mt-1 text-4xl font-black">센서 시나리오 시뮬레이터</h1></div></div>
-      <div class="text-right"><p class="text-sm text-slate-400">연결 상태 · Build 20260623.4</p><p class="mt-1 flex items-center gap-2 font-bold text-emerald-400"><span class="h-3 w-3 animate-pulse rounded-full bg-emerald-400"></span>기존 화면 실시간 연결</p></div>
+      <div class="flex items-center gap-5"><img src="/assets/logo.png" alt="AquaGuard AI" class="h-20 w-20 rounded-2xl bg-white object-contain"/><div><p class="font-bold text-sky-400">HACKATHON CONTROL DESK</p><h1 class="mt-1 text-4xl font-black">현장 센서 시뮬레이터</h1></div></div>
+      <div class="text-right"><p class="text-sm text-slate-400">연결 상태 · Build 20260623.5</p><p class="mt-1 flex items-center gap-2 font-bold text-emerald-400"><span class="h-3 w-3 animate-pulse rounded-full bg-emerald-400"></span>기존 화면 실시간 연결</p></div>
     </header>
 
     <section class="mt-10 grid gap-8 lg:grid-cols-[1.5fr_1fr]">
       <div>
-        <h2 class="text-2xl font-bold">시나리오 선택</h2>
-        <p class="mt-2 text-slate-400">버튼을 누르면 오른쪽 기존 AquaGuard 화면이 즉시 변경됩니다.</p>
-        <div class="mt-6 grid grid-cols-2 gap-5">
-          <button data-scenario="normal" class="scenario rounded-3xl border-2 border-emerald-500 bg-emerald-500/10 p-7 text-left transition hover:-translate-y-1 hover:bg-emerald-500/20"><span class="text-4xl">✓</span><strong class="mt-5 block text-2xl text-emerald-400">정상 상태로</strong><span class="mt-2 block text-slate-300">5.2 bar · 진동 18점</span></button>
-          <button data-scenario="warning" class="scenario rounded-3xl border-2 border-amber-500 bg-amber-500/10 p-7 text-left transition hover:-translate-y-1 hover:bg-amber-500/20"><span class="text-4xl">!</span><strong class="mt-5 block text-2xl text-amber-400">펌프 부하 증가</strong><span class="mt-2 block text-slate-300">7.4 bar · 진동 55점</span></button>
-          <button data-scenario="danger" class="scenario rounded-3xl border-2 border-red-500 bg-red-500/10 p-7 text-left transition hover:-translate-y-1 hover:bg-red-500/20"><span class="text-4xl">⚠</span><strong class="mt-5 block text-2xl text-red-400">베어링 마모 발생</strong><span class="mt-2 block text-slate-300">8.5 bar · 진동 82점</span></button>
-          <button data-scenario="recovery" class="scenario rounded-3xl border-2 border-sky-500 bg-sky-500/10 p-7 text-left transition hover:-translate-y-1 hover:bg-sky-500/20"><span class="text-4xl">↘</span><strong class="mt-5 block text-2xl text-sky-400">복구 시작</strong><span class="mt-2 block text-slate-300">6.3 bar · 진동 32점</span></button>
+        <h2 class="text-2xl font-bold">현장 위치 선택</h2>
+        <p class="mt-2 text-slate-400">양식장 배관 위 의심 지점을 누르면 기존 AquaGuard 화면의 센서값과 경고가 함께 변합니다.</p>
+        <div class="farm-stage mt-6">
+          <div class="pulse-ring" aria-hidden="true"></div>
+          <button data-scenario="normal" class="hotspot hotspot-normal">
+            <span class="text-2xl">✓</span><span>정상 상태</span>
+          </button>
+          <button data-scenario="danger" class="hotspot hotspot-danger">
+            <span class="text-2xl">⚠</span><span>마모 발생</span>
+          </button>
+          <div class="absolute bottom-5 left-5 z-[2] max-w-sm rounded-3xl border border-white/20 bg-slate-950/80 p-5 backdrop-blur">
+            <p class="text-sm font-bold text-sky-300">현장 데모 모드</p>
+            <p class="mt-2 text-2xl font-black">수조 #03 메인 배관</p>
+            <p class="mt-2 text-sm text-slate-300">마모 발생을 누르면 수압·진동이 점진적으로 상승하고 모바일 화면에 긴급 알림이 표시됩니다.</p>
+          </div>
+        </div>
+        <div class="mt-5 grid grid-cols-2 gap-4">
+          <button data-scenario="warning" class="scenario rounded-2xl border-2 border-amber-500 bg-amber-500/10 p-5 text-left transition hover:-translate-y-1 hover:bg-amber-500/20"><span class="text-2xl">!</span><strong class="ml-2 text-xl text-amber-400">부하 증가</strong><span class="mt-2 block text-slate-300">7.4 bar · 진동 55점</span></button>
+          <button data-scenario="recovery" class="scenario rounded-2xl border-2 border-sky-500 bg-sky-500/10 p-5 text-left transition hover:-translate-y-1 hover:bg-sky-500/20"><span class="text-2xl">↘</span><strong class="ml-2 text-xl text-sky-400">복구 시작</strong><span class="mt-2 block text-slate-300">6.3 bar · 진동 32점</span></button>
         </div>
         <div class="mt-6 rounded-2xl border border-slate-700 bg-slate-900 p-5">
           <div class="flex items-center justify-between"><span id="animation-status" class="font-bold text-slate-300">시나리오 대기 중</span><span id="animation-percent" class="font-bold text-sky-400">0%</span></div>
@@ -43,7 +66,7 @@
       </aside>
     </section>
   </main>
-  <script src="/demo-state.js?v=20260623-4"></script>
+  <script src="/demo-state.js?v=20260623-5"></script>
   <script>
     const badgeColors={normal:'bg-emerald-500',warning:'bg-amber-400',danger:'bg-red-500 text-white',recovery:'bg-sky-400'};
     const pressure=document.getElementById('pressure'), vibration=document.getElementById('vibration'), statusBadge=document.getElementById('status-badge'), log=document.getElementById('event-log');

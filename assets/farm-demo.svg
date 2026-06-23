@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">양식장 수조 데모 배경</title>
+  <desc id="desc">바다 위 수조와 배관, 부표를 단순화한 시뮬레이터 배경</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#f9dfb3"/>
+      <stop offset=".42" stop-color="#a9d7ee"/>
+      <stop offset="1" stop-color="#1d4f77"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#0b4263"/>
+      <stop offset=".52" stop-color="#123e63"/>
+      <stop offset="1" stop-color="#071f3b"/>
+    </linearGradient>
+    <linearGradient id="pipe" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#25313f"/>
+      <stop offset=".5" stop-color="#111827"/>
+      <stop offset="1" stop-color="#050b14"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#020617" flood-opacity=".45"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="675" fill="url(#sky)"/>
+  <path d="M0 235 C180 198 263 242 420 210 C590 176 730 220 872 190 C1011 160 1102 178 1200 156 L1200 0 L0 0Z" fill="#f7e2bd" opacity=".45"/>
+  <path d="M788 174 C865 110 930 112 1012 154 C1088 194 1141 151 1200 117 L1200 241 L769 241Z" fill="#243044" opacity=".72"/>
+  <path d="M0 282 L1200 238 L1200 675 L0 675Z" fill="url(#sea)"/>
+  <g opacity=".35" stroke="#e0f2fe" stroke-width="3">
+    <path d="M8 356 C126 329 214 367 328 342 C430 319 509 344 620 326 C760 303 850 337 982 311 C1070 294 1135 302 1198 285"/>
+    <path d="M0 456 C146 421 231 466 374 431 C492 402 574 444 700 409 C852 368 955 430 1200 371"/>
+    <path d="M0 565 C131 525 265 573 392 540 C515 508 609 555 744 520 C900 480 1011 535 1200 493"/>
+  </g>
+  <g filter="url(#softShadow)">
+    <g stroke="url(#pipe)" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M94 381 L958 232 L1126 314 L235 513 Z" fill="none" stroke-width="24"/>
+      <path d="M196 319 L1004 193 L1140 262 L311 438 Z" fill="none" stroke-width="19" opacity=".92"/>
+      <path d="M174 442 L1050 272" stroke-width="16"/>
+      <path d="M244 324 L315 511" stroke-width="15"/>
+      <path d="M428 291 L495 468" stroke-width="15"/>
+      <path d="M612 262 L681 426" stroke-width="15"/>
+      <path d="M792 230 L865 385" stroke-width="15"/>
+      <path d="M963 207 L1031 348" stroke-width="15"/>
+    </g>
+    <g fill="#c94b37" opacity=".94" stroke="#7f1d1d" stroke-width="5">
+      <ellipse cx="232" cy="421" rx="42" ry="22" transform="rotate(-12 232 421)"/>
+      <ellipse cx="380" cy="392" rx="42" ry="22" transform="rotate(-12 380 392)"/>
+      <ellipse cx="534" cy="363" rx="42" ry="22" transform="rotate(-12 534 363)"/>
+      <ellipse cx="690" cy="333" rx="42" ry="22" transform="rotate(-12 690 333)"/>
+      <ellipse cx="846" cy="303" rx="42" ry="22" transform="rotate(-12 846 303)"/>
+      <ellipse cx="1004" cy="274" rx="42" ry="22" transform="rotate(-12 1004 274)"/>
+      <ellipse cx="316" cy="502" rx="47" ry="24" transform="rotate(-12 316 502)"/>
+      <ellipse cx="742" cy="421" rx="45" ry="23" transform="rotate(-12 742 421)"/>
+    </g>
+  </g>
+  <rect x="0" y="0" width="1200" height="675" fill="#020617" opacity=".08"/>
+</svg>
