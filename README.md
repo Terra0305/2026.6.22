@@ -1,6 +1,6 @@
-# AquaGuard AI(해커톤 우승)
+# AquaGuard AI(해커톤 대상)
 
-조선대학교 AI부트캠프 해커톤 우승작
+조선대학교 AI부트캠프 해커톤 대상 수상작
 
 발표 PPT: [https://www.canva.com/design/DAHNQ6zTlEk/c4ndsNDftl_H7CTK8wJUSA/edit](https://canva.link/j43g939kpesu4qk)
 
