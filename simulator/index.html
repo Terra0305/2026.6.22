@@ -23,7 +23,7 @@
   <main class="mx-auto max-w-6xl px-8 py-10">
     <header class="flex items-center justify-between gap-8 border-b border-slate-700 pb-8">
       <div class="flex items-center gap-5"><img src="/assets/logo.png" alt="AquaGuard AI" class="h-20 w-20 rounded-2xl bg-white object-contain"/><div><p class="font-bold text-sky-400">HACKATHON CONTROL DESK</p><h1 class="mt-1 text-4xl font-black">현장 센서 시뮬레이터</h1></div></div>
-      <div class="text-right"><p class="text-sm text-slate-400">연결 상태 · Build 20260623.6</p><p class="mt-1 flex items-center gap-2 font-bold text-emerald-400"><span class="h-3 w-3 animate-pulse rounded-full bg-emerald-400"></span>기존 화면 실시간 연결</p></div>
+      <div class="text-right"><p class="text-sm text-slate-400">연결 상태 · Build 20260623.7</p><p class="mt-1 flex items-center gap-2 font-bold text-emerald-400"><span class="h-3 w-3 animate-pulse rounded-full bg-emerald-400"></span>기존 화면 실시간 연결</p></div>
     </header>
 
     <section class="mt-10 grid gap-8 lg:grid-cols-[1.5fr_1fr]">
@@ -66,7 +66,7 @@
   <script>
     const badgeColors={normal:'bg-emerald-500',warning:'bg-amber-400',danger:'bg-red-500 text-white',recovery:'bg-sky-400'};
     const pressure=document.getElementById('pressure'), vibration=document.getElementById('vibration'), statusBadge=document.getElementById('status-badge'), log=document.getElementById('event-log');
-    let lastTone=null,completedEvent=null;
+    let lastTone=null,completedEvent=null,pendingSequence=null;
     function addLog(text){const item=document.createElement('li');item.className='rounded-xl bg-slate-800 p-3';item.textContent=`${new Date().toLocaleTimeString()} · ${text}`;log.prepend(item)}
     function render(state){
       pressure.textContent=state.pressure.toFixed(1); vibration.textContent=state.vibration; statusBadge.textContent=state.label;
@@ -84,6 +84,7 @@
     AquaGuardDemo.subscribe(render);
     function startScenario(targetId){
       const start=AquaGuardDemo.materialize(AquaGuardDemo.read()),target=AquaGuardDemo.scenarios[targetId];
+      if(pendingSequence){clearTimeout(pendingSequence);pendingSequence=null}
       const alreadyNormal=targetId==='normal'&&Math.abs(start.pressure-target.pressure)<0.05&&Math.abs(start.vibration-target.vibration)<=1;
       if(alreadyNormal){
         const state=AquaGuardDemo.publish('normal');
@@ -91,6 +92,18 @@
         document.getElementById('animation-percent').textContent='100% · 0초';
         document.getElementById('animation-progress').style.width='100%';
         addLog(`정상 상태 초기화 · ${state.pressure.toFixed(1)} bar`);
+        return;
+      }
+      if(targetId==='danger'&&start.tone==='normal'){
+        completedEvent=null;
+        addLog('마모 발생 시나리오 시작 · 주의 단계 3.0초 후 위험 단계 4.0초');
+        AquaGuardDemo.startTransition('warning',3000);
+        pendingSequence=setTimeout(()=>{
+          pendingSequence=null;
+          completedEvent=null;
+          addLog('주의 단계 확인 · 위험 단계로 전환');
+          AquaGuardDemo.startTransition('danger',4000);
+        },4000);
         return;
       }
       const baseDurations={normal:8000,warning:4000,danger:6000,recovery:9000},minimumDurations={normal:2500,warning:1800,danger:3500,recovery:2500};
