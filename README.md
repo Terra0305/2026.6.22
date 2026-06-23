@@ -1,4 +1,4 @@
-# AquaGuard AI
+# AquaGuard AI(해커톤 우승)
 
 조선대학교 AI부트캠프 해커톤 우승작
 
